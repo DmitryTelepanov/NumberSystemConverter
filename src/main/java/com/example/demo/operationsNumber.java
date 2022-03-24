@@ -11,6 +11,7 @@ public class operationsNumber {
         conformityNumbers.put("0",0);
         conformityNumbers.put("1",1);
         conformityNumbers.put("2",2);
+        conformityNumbers.put("3",3);
         conformityNumbers.put("4",4);
         conformityNumbers.put("5",5);
         conformityNumbers.put("6",6);
@@ -24,8 +25,15 @@ public class operationsNumber {
         conformityNumbers.put("E",14);
         conformityNumbers.put("F",15);
     }
+    private HashMap <String,Integer> baseNumbers = new HashMap<String,Integer>(); {
+        baseNumbers.put("Двоичная",2);
+        baseNumbers.put("Восьмеричная",8);
+        baseNumbers.put("Десятичная",10);
+        baseNumbers.put("Шестнадцатеричная",16);
+    }
     public void CheckNumber (HashMap <String,String> Map) {
         ArrayList<String> listStringSystemNumbers = getSystemNumbers(Map);
+        //Циклом проходимся по массиву и проверяем каждый символ на принадлежность к системе счисления
         for (int i = 0; i < Map.get("numbers").length(); i++) {
             if (! listStringSystemNumbers.contains(Map.get("numbers").replace(" ","").toUpperCase(Locale.ROOT).substring(i,i+1))) {
                 Alert Message = new Alert(Alert.AlertType.INFORMATION);
@@ -34,16 +42,19 @@ public class operationsNumber {
                 break;
             }
         }
+        conversionToDec(Map);
 
     }
 
-    public ArrayList<String> getSystemNumbers (HashMap <String,String> Map) {
+    private ArrayList<String> getSystemNumbers (HashMap <String,String> Map) {
+        //Собираем массив возможных цифр в переданной системе счисления для возможных проверок
         String [] arrayStringSystemNumbers = new String[] {"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"};
-        HashMap <String,Integer> numbersSystem = new HashMap<String,Integer>();
-        numbersSystem.put("Двоичная",1);
-        numbersSystem.put("Восьмеричная",7);
-        numbersSystem.put("Десятичная",9);
-        numbersSystem.put("Шестнадцатеричная",15);
+        HashMap <String,Integer> numbersSystem = new HashMap<String,Integer>(); {
+            numbersSystem.put("Двоичная",1);
+            numbersSystem.put("Восьмеричная",7);
+            numbersSystem.put("Десятичная",9);
+            numbersSystem.put("Шестнадцатеричная",15);
+        }
         ArrayList <String> listStringSystemNumbers = new ArrayList<String>();
 
         for (int i = 0; i <= numbersSystem.get(Map.get("ToSystem")); i++) {
@@ -53,11 +64,19 @@ public class operationsNumber {
         return listStringSystemNumbers;
     }
 
-    public String conversionToDec () {
+    public String conversionToDec (HashMap <String,String> Map) {
+        //Переводим переданное число в десятичную систему счисления
+        Integer volume = 0;
+        for (int i = 0; i < Map.get("numbers").length(); i++) {
+            Integer volumeBuffer = conformityNumbers.get(new StringBuffer(Map.get("numbers").replace(" ","").toUpperCase(Locale.ROOT)).reverse().substring(i,i+1));
+            volume = volume + (int)(Math.pow(baseNumbers.get(Map.get("ToSystem")), i) * volumeBuffer);
+        }
+        System.out.println(volume);
         return "";
     }
 
-    public String conversionToEndSystem () {
+    private String conversionToEndSystem () {
+
         return "";
     }
 }
