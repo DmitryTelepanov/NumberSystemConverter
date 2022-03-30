@@ -2,12 +2,14 @@ package com.example.demo;
 
 import javafx.scene.control.Alert;
 
+import java.nio.charset.MalformedInputException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
 public class operationsNumber {
     private HashMap <String,Integer> conformityNumbers = new HashMap<String,Integer>(); {
+        //Соответсвия цифрам
         conformityNumbers.put("0",0);
         conformityNumbers.put("1",1);
         conformityNumbers.put("2",2);
@@ -25,13 +27,47 @@ public class operationsNumber {
         conformityNumbers.put("E",14);
         conformityNumbers.put("F",15);
     }
+    private HashMap <Integer,String> conformityNumbersReverse = new HashMap<Integer,String>(); {
+        //Соответсвия цифрам
+        conformityNumbersReverse.put(0,"0");
+        conformityNumbersReverse.put(1,"1");
+        conformityNumbersReverse.put(2,"2");
+        conformityNumbersReverse.put(3,"3");
+        conformityNumbersReverse.put(4,"4");
+        conformityNumbersReverse.put(5,"5");
+        conformityNumbersReverse.put(6,"6");
+        conformityNumbersReverse.put(7,"7");
+        conformityNumbersReverse.put(8,"8");
+        conformityNumbersReverse.put(9,"9");
+        conformityNumbersReverse.put(10,"A");
+        conformityNumbersReverse.put(11,"B");
+        conformityNumbersReverse.put(12,"C");
+        conformityNumbersReverse.put(13,"D");
+        conformityNumbersReverse.put(14,"E");
+        conformityNumbersReverse.put(15,"F");
+    }
     private HashMap <String,Integer> baseNumbers = new HashMap<String,Integer>(); {
+        //Основания системы счисления
         baseNumbers.put("Двоичная",2);
         baseNumbers.put("Восьмеричная",8);
         baseNumbers.put("Десятичная",10);
         baseNumbers.put("Шестнадцатеричная",16);
     }
-    public void CheckNumber (HashMap <String,String> Map) {
+
+    public void workToNumbers (HashMap <String,String> Map) {
+        Alert Message = new Alert(Alert.AlertType.INFORMATION);
+        if (CheckNumber(Map)) {
+            if (Map.get("ToSystem").equals("Десятичная")) {
+                Message.setHeaderText("Искомое число: " + conversionToEndSystem(Integer.parseInt(Map.get("numbers")), Map.get("EndSystem")));
+            }
+            else {
+                Message.setHeaderText("Искомое число: " + conversionToEndSystem(conversionToDec(Map),Map.get("EndSystem")));
+            }
+            Message.show();
+        }
+    }
+
+    public boolean CheckNumber (HashMap <String,String> Map) {
         ArrayList<String> listStringSystemNumbers = getSystemNumbers(Map);
         //Циклом проходимся по массиву и проверяем каждый символ на принадлежность к системе счисления
         for (int i = 0; i < Map.get("numbers").length(); i++) {
@@ -39,11 +75,10 @@ public class operationsNumber {
                 Alert Message = new Alert(Alert.AlertType.INFORMATION);
                 Message.setHeaderText("Вводите символы только " + Map.get("ToSystem").substring(0,Map.get("ToSystem").length() - 2) + "ой" + " системы!");
                 Message.show();
-                break;
+                return false;
             }
         }
-        conversionToDec(Map);
-
+        return true;
     }
 
     private ArrayList<String> getSystemNumbers (HashMap <String,String> Map) {
@@ -64,19 +99,23 @@ public class operationsNumber {
         return listStringSystemNumbers;
     }
 
-    public String conversionToDec (HashMap <String,String> Map) {
+    public Integer conversionToDec (HashMap <String,String> Map) {
         //Переводим переданное число в десятичную систему счисления
         Integer volume = 0;
         for (int i = 0; i < Map.get("numbers").length(); i++) {
             Integer volumeBuffer = conformityNumbers.get(new StringBuffer(Map.get("numbers").replace(" ","").toUpperCase(Locale.ROOT)).reverse().substring(i,i+1));
             volume = volume + (int)(Math.pow(baseNumbers.get(Map.get("ToSystem")), i) * volumeBuffer);
         }
-        System.out.println(volume);
-        return "";
+        return volume;
     }
 
-    private String conversionToEndSystem () {
-
-        return "";
+    private String conversionToEndSystem (Integer number, String EndSystem) {
+        //Переводим переданное число в необходимую систему счисления
+        String result = "";
+        for (int i = 0; number != 0; i++) {
+            result = result + (conformityNumbersReverse.get(number - (baseNumbers.get(EndSystem) * (number / baseNumbers.get(EndSystem)))));
+            number = number / baseNumbers.get(EndSystem);
+        }
+        return String.valueOf(new StringBuffer(result).reverse());
     }
 }

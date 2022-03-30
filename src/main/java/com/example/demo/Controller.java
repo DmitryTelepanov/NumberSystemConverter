@@ -68,7 +68,7 @@ public class Controller {
             if(selectGroupTwoSystem != null){
                 parameters.put("EndSystem",selectGroupTwoSystem.getText());
             }
-            operations.CheckNumber(parameters);
+            operations.workToNumbers(parameters);
         });
 
     }
